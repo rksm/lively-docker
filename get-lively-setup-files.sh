@@ -6,4 +6,4 @@ rsync -vzPe "ssh -p 40922" \
 
 # rm -rfd PartsBin/
 # rsync -rlptD -vzPe "ssh -p 40922" \
-#     root@127.0.0.1:/var/www/LivelyKernel/PartsBin PartrsBin
+#     root@127.0.0.1:/var/www/LivelyKernel/PartsBin PartsBin
