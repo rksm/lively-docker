@@ -27,24 +27,25 @@ RUN npm install forever -g
 
 # sqlite
 RUN export DEBIAN_FRONTEND=noninteractive
-RUN apt-get -y install sqlite libsqlite3-dev unzip
+RUN apt-get -y install sqlite3 libsqlite3-dev unzip
 
 # lively
 RUN mkdir -p /var/www/
 RUN git clone https://github.com/LivelyKernel/LivelyKernel /var/www/LivelyKernel
 
 WORKDIR /var/www/LivelyKernel
-
 RUN npm install
-
 ENV WORKSPACE_LK /var/www/LivelyKernel
 
+# PartsBin
 RUN node -e "require('./bin/env'); require('./bin/helper/download-partsbin')();"
+# ADD PartsBin/ /var/www/LivelyKernel/PartsBin/ # <-- alternative
 
-ADD objects.sqlite /var/www/LivelyKernel/objects.sqlite
-ADD PartsBin/ /var/www/LivelyKernel/PartsBin/
+# object DB
+ADD objects.sqlite.exported /var/www/LivelyKernel/objects.sqlite.exported
+RUN sqlite3 objects.sqlite < objects.sqlite.exported
+RUN rm objects.sqlite.exported
 
-# RUN npm install -g http-server
-
+# Let it fly!
 EXPOSE 22
 CMD    /usr/sbin/sshd && npm start
