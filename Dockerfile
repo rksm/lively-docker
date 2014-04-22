@@ -29,6 +29,9 @@ RUN npm install forever -g
 RUN export DEBIAN_FRONTEND=noninteractive
 RUN apt-get -y install sqlite3 libsqlite3-dev unzip
 
+# lively helper: not absolutely required but nice to have
+RUN apt-get -y install tidy
+
 # lively
 RUN mkdir -p /var/www/
 RUN git clone https://github.com/LivelyKernel/LivelyKernel /var/www/LivelyKernel
