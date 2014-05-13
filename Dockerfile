@@ -43,9 +43,7 @@ RUN node -e "require('./bin/env'); require('./bin/helper/download-partsbin')();"
 # ADD PartsBin/ /var/www/LivelyKernel/PartsBin/ # <-- alternative
 
 # object DB
-ADD objects.sqlite.exported /var/www/LivelyKernel/objects.sqlite.exported
-RUN sqlite3 objects.sqlite < objects.sqlite.exported
-RUN rm objects.sqlite.exported
+ADD objects.sqlite /var/www/LivelyKernel/objects.sqlite
 
 # Let it fly!
 EXPOSE 22
