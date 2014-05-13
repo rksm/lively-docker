@@ -1,8 +1,8 @@
 # NVM as non root
 #
-# VERSION     0.1
+# VERSION     0.2
 
-FROM          ubuntu
+FROM          ubuntu:trusty
 MAINTAINER    Robert Krahn <robert.krahn@gmail.com>
 
 # Install dependencies
