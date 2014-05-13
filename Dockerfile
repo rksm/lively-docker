@@ -5,29 +5,27 @@
 FROM          ubuntu
 MAINTAINER    Robert Krahn <robert.krahn@gmail.com>
 
-
 # Install dependencies
-RUN apt-get update
-RUN apt-get -y install build-essential libssl-dev curl git bzip2
+RUN DEBIAN_FRONTEND=noninteractive apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential libssl-dev curl git bzip2 unzip
 
 # ssh
-RUN apt-get install -y openssh-server
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y openssh-server
 RUN mkdir /var/run/sshd
 RUN echo 'root:12345' |chpasswd
 
 # node
-RUN apt-get install -y python-software-properties python
-RUN add-apt-repository ppa:chris-lea/node.js
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y software-properties-common python
+RUN DEBIAN_FRONTEND=noninteractive add-apt-repository ppa:chris-lea/node.js
 RUN echo "deb http://us.archive.ubuntu.com/ubuntu/ precise universe" >> /etc/apt/sources.list
-RUN apt-get update
-RUN apt-get install -y nodejs
+RUN DEBIAN_FRONTEND=noninteractive apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
 
 # lively dependencies
 RUN npm install forever -g
 
 # sqlite
-RUN export DEBIAN_FRONTEND=noninteractive
-RUN apt-get -y install sqlite3 libsqlite3-dev unzip
+RUN apt-get -y install sqlite3 libsqlite3-dev
 
 # lively helper: not absolutely required but nice to have
 RUN apt-get -y install tidy
@@ -51,4 +49,5 @@ RUN rm objects.sqlite.exported
 
 # Let it fly!
 EXPOSE 22
-CMD    /usr/sbin/sshd && npm start
+EXPOSE 9001
+CMD    /usr/sbin/sshd && forever bin/lk-server.js -p 9001
