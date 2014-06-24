@@ -1,34 +1,14 @@
-# NVM as non root
-#
-# VERSION     0.2
-
-FROM          ubuntu:trusty
+FROM          dockerfile/nodejs
 MAINTAINER    Robert Krahn <robert.krahn@gmail.com>
 
-# Install dependencies
-RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential libssl-dev curl git bzip2 unzip
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update
+RUN apt-get upgrade -y
+RUN apt-get -y install curl git bzip2 unzip
 
-# ssh
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y openssh-server
-RUN mkdir /var/run/sshd
-RUN echo 'root:12345' |chpasswd
-
-# node
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y software-properties-common python
-RUN DEBIAN_FRONTEND=noninteractive add-apt-repository ppa:chris-lea/node.js
-RUN echo "deb http://us.archive.ubuntu.com/ubuntu/ precise universe" >> /etc/apt/sources.list
-RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
-
-# lively dependencies
-RUN npm install forever -g
-
-# sqlite
-RUN apt-get -y install sqlite3 libsqlite3-dev
-
-# lively helper: not absolutely required but nice to have
-RUN apt-get -y install tidy
+# for debugging
+RUN npm install -g node-inspector
+RUN apt-get install lsof
 
 # lively
 RUN mkdir -p /var/www/
@@ -42,10 +22,16 @@ ENV WORKSPACE_LK /var/www/LivelyKernel
 RUN node -e "require('./bin/env'); require('./bin/helper/download-partsbin')();"
 # ADD PartsBin/ /var/www/LivelyKernel/PartsBin/ # <-- alternative
 
-# object DB
+# optional lively dependencies
+RUN npm install forever -g
+
+# object DB, sqlite
 ADD objects.sqlite /var/www/LivelyKernel/objects.sqlite
 
-# Let it fly!
-EXPOSE 22
+ENV livelyport 9001
 EXPOSE 9001
-CMD    /usr/sbin/sshd && forever bin/lk-server.js -p 9001
+EXPOSE 9002
+EXPOSE 9003
+EXPOSE 9004
+
+CMD npm start
