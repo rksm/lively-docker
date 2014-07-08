@@ -21,6 +21,6 @@ EXPOSE 9002
 EXPOSE 9003
 EXPOSE 9004
 
-CMD chown -R lively:lively $WORKSPACE_LK; \
-    cd $WORKSPACE_LK; \
+CMD cd $WORKSPACE_LK; \
+    rm *.pid; \
     npm start
