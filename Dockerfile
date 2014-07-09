@@ -5,22 +5,27 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get -y install curl git bzip2 unzip
+RUN apt-get install lsof
+
+# lively user
+RUN /usr/sbin/useradd --create-home --home-dir /home/lively --shell /bin/bash lively
 
 # nodejs tooling
 RUN npm install -g node-inspector
-RUN apt-get install lsof
 RUN npm install forever -g
 
 # lively
-ENV WORKSPACE_LK /var/www/LivelyKernel
-RUN mkdir -p /var/www/
+ENV WORKSPACE_LK /home/lively/LivelyKernel
+ENV HOME /home/lively
 ENV livelyport 9001
+USER lively
+
+WORKDIR /home/lively/LivelyKernel
 
 EXPOSE 9001
 EXPOSE 9002
 EXPOSE 9003
 EXPOSE 9004
 
-CMD cd $WORKSPACE_LK; \
-    rm *.pid; \
+CMD rm *.pid; \
     npm start
